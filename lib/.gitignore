@@ -1,0 +1,22 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+
+# IDE related
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# OS related
+.DS_Store
+Thumbs.db
+
+# Hive local DB
+hive_data/
