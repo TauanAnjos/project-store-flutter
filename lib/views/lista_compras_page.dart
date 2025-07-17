@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/lista_compra.dart';
 import 'cadastro_lista_page.dart';
@@ -45,69 +45,125 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             );
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: box.length,
-            itemBuilder: (context, index) {
-              final key = box.keyAt(index);
-              final lista = box.get(key);
+          final listas = box.values.toList();
+          final totalComprado = listas
+              .where((item) => item.status.toLowerCase() == 'comprado')
+              .fold(0.0, (soma, item) => soma + item.valorTotal);
 
-              if (lista == null) return const SizedBox.shrink();
+          final totalAComprar = listas
+              .where((item) => item.status.toLowerCase() == 'a comprar')
+              .fold(0.0, (soma, item) => soma + item.valorTotal);
 
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                elevation: 3,
-                child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  title: Text(
-                    lista.titulo,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Data: ${_formatarData(lista.data)}',
-                          style: const TextStyle(fontSize: 14),
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: box.length,
+                  itemBuilder: (context, index) {
+                    final key = box.keyAt(index);
+                    final lista = box.get(key);
+
+                    if (lista == null) return const SizedBox.shrink();
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 3,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 16),
+                        title: Text(
+                          lista.titulo,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                        const SizedBox(height: 4),
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(fontSize: 14, color: Colors.black87),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const TextSpan(text: 'Status: '),
-                              TextSpan(
-                                text: lista.status,
-                                style: TextStyle(
-                                  color: lista.status == 'comprado'
-                                      ? Colors.green
-                                      : Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Text(
+                                'Data: ${_formatarData(lista.data)}',
+                                style: const TextStyle(fontSize: 14),
                               ),
-                              TextSpan(
-                                text: ' | Valor: R\$ ${lista.valorTotal.toStringAsFixed(2)}',
+                              const SizedBox(height: 4),
+                              RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                                  children: [
+                                    const TextSpan(text: 'Status: '),
+                                    TextSpan(
+                                      text: lista.status,
+                                      style: TextStyle(
+                                        color: lista.status == 'comprado'
+                                            ? Colors.green
+                                            : Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: ' | Valor: R\$ ${lista.valorTotal.toStringAsFixed(2)}',
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  isThreeLine: true,
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                    onPressed: () => _confirmarDelete(key),
-                  ),
+                        isThreeLine: true,
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.redAccent),
+                          onPressed: () => _confirmarDelete(key),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                width: double.infinity,
+                color: Colors.grey.shade100,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 16),
+                        children: [
+                          const TextSpan(
+                            text: 'Total gasto (comprado): ',
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: 'R\$ ${totalComprado.toStringAsFixed(2)}',
+                            style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(fontSize: 16),
+                        children: [
+                          const TextSpan(
+                            text: 'Total estimado (a comprar): ',
+                            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: 'R\$ ${totalAComprar.toStringAsFixed(2)}',
+                            style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         },
       ),
