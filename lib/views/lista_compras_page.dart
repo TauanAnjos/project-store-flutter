@@ -69,10 +69,35 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 6),
-                    child: Text(
-                      'Data: ${_formatarData(lista.data)}\n'
-                      'Status: ${lista.status} | Valor: R\$ ${lista.valorTotal.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Data: ${_formatarData(lista.data)}',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(height: 4),
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(fontSize: 14, color: Colors.black87),
+                            children: [
+                              const TextSpan(text: 'Status: '),
+                              TextSpan(
+                                text: lista.status,
+                                style: TextStyle(
+                                  color: lista.status == 'comprado'
+                                      ? Colors.green
+                                      : Colors.orange,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' | Valor: R\$ ${lista.valorTotal.toStringAsFixed(2)}',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   isThreeLine: true,
